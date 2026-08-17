@@ -122,10 +122,11 @@ class AddContainerResponse(BaseModel):
     late_charge: int
     arrived_on: str
 
-@app.post("/voyages/:voyage_id/containers",
+@app.post("/voyages/{voyage_id}/containers",
           response_model = AddContainerResponse,
           status_code=status.HTTP_201_CREATED,
           summary = "Added a container to a existing voyage")
+
 async def load_container(voyage_id: str, payload: AddContainer):
      if voyage_id not in voyage_db:
         raise HTTPException(
@@ -173,68 +174,52 @@ async def load_container(voyage_id: str, payload: AddContainer):
          return new_container
 
 
-#API4
-class AddHop(BaseModel):
-      from_field: str = Field(..., alias="from")
-      to: str = Field(..., examples=["Dubai"])
-      reached_on: date = Field(..., examples=["2026-08-23"])
+# #API4
+# class AddHop(BaseModel):
+#       from_field: str = Field(..., alias="from")
+#       to: str = Field(..., examples=["Dubai"])
+#       reached_on: date = Field(..., examples=["2026-08-23"])
 
-class AddHopRequest(BaseModel):
-    id: str
-    voyage_id: str
-    from_field : str
-    to: str
-    reached_on: date
-    voyage_status: str
-    effective_route: list
-    arrived_containers: dict
+# class AddHopRequest(BaseModel):
+#     id: str
+#     voyage_id: str
+#     from_field : str
+#     to: str
+#     reached_on: date
+#     voyage_status: str
+#     effective_route: list
+#     arrived_containers: dict
 
-@app.post("/voyages/{voyage_id}/hops",
-          response_model = AddHop,
-          status_code=status.HTTP_201_CREATED,
-          summary = "Added a hop to a existing voyage")
+# @app.post("/voyages/{voyage_id}/hops",
+#           response_model = AddHop,
+#           status_code=status.HTTP_201_CREATED,
+#           summary = "Added a hop to a existing voyage")
 
-async def add_hop_to_voyage(voyage_id: str, hop_data: AddHop):
+# async def add_hop_to_voyage(voyage_id: str, hop_data: AddHop):
 
-    if voyage_id not in voyage_db:
-         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"VOYAGE_NOT_FOUND"
-         )
+#     if voyage_id not in voyage_db:
+#          raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"VOYAGE_NOT_FOUND"
+#          )
 
-    voyage = voyage_db[voyage_id]
-    route = voyage.setdefault("effective_route", [])
-    route.append(hop_data.to_place)
+#     voyage = voyage_db[voyage_id]
+#     route = voyage.setdefault("effective_route", [])
+#     route.append(hop_data.to_place)
 
-    hop_id = f"h{len(voyage_db.get('hops', [])) + 1}"
-    new_hop = {
-        "id": hop_id,
-        "voyage_id": voyage_id,
-        "from": hop_data.from_place,
-        "to": hop_data.to_place,
-        "reached_on": hop_data.reached_on,
-        "voyage_status": voyage_db["voyage_status"],
-        "effective_route": route,
-    }
+#     hop_id = f"h{len(voyage_db.get('hops', [])) + 1}"
+#     new_hop = {
+#         "id": hop_id,
+#         "voyage_id": voyage_id,
+#         "from": hop_data.from_place,
+#         "to": hop_data.to_place,
+#         "reached_on": hop_data.reached_on,
+#         "voyage_status": voyage_db["voyage_status"],
+#         "effective_route": route,
+#     }
     
-    voyage_db.setdefault("hops", []).append(new_hop)
-    return new_hop
-
-
-
-    
-    
-
-
-
-         
-             
-
-
-
-
-
-
+#     voyage_db.setdefault("hops", []).append(new_hop)
+#     return new_hop
 
 
 if __name__ == "__main__":
